@@ -14,37 +14,79 @@ namespace FruitStore
             costs.Add(CheckOut(new string[] { })); //empty test
             costs.Add(CheckOut(new[] { "Apple", "Orange" })); //basic test
             costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Apple" })); //example given by prompt
-            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", })); //larger scale test
+            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple" })); //larger scale test
+            costs.Add(CheckOut(new[] { "Banana" }));
+            costs.Add(CheckOut(new[] { "Banana", "Banana" }));
+            costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana" }));
+            costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana", "Banana" }));
+            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana" }));
 
             foreach (var example in costs)
                 Console.WriteLine(example);
         }
 
-        //Step 1
-        //Initial Checkout Method
-        //Apple: 45c, Orange: 65c
-        //At this point, my store ONLY sells apples and oranges, so every item Will be either an apple or orange
-        //
-        //Step 2
-        //Simple offers
-        //Adding buy 1 get 1 apples
-        //3 for price of 2 oranges
+        /*Step 1
+        Initial Checkout Method
+        Apple: 45c, Orange: 65c
+        
+        Step 2
+        Simple offers
+        Adding buy 1 get 1 apples
+        3 for price of 2 oranges
+        
+        Step 3
+        More Complicated Offers
+        Bananas: 60c
+        Also buy one get one like apples
+        Cheapest item should be free
+        When comparing the value of multiple items the lowest is removed. 
+        The example given compares multiple bananas to multiple apples. The lower of those two is removed even with no oranges.
+        So lowest Non zero option is removed as long as its not Only option
+        */
         public static double CheckOut(string[] pCart)
         {
             if(!(pCart.Length >= 1))
                 return 0;
+
+            #region Two Fruit Method
+            /*
+            //int apples = 0;
+            //int oranges = 0;
+            //foreach (var fruit in pCart)
+            //{
+            //    if (fruit == "Apple")
+            //        apples++;
+            //    else
+            //        oranges++;
+            //}
+
+            //return (ApplesCost(apples)) + (OrangesCost(oranges));
+            */
+            #endregion
+
+            #region >2 Fruit Method
+
+            //Determine the cost of each item type
+            var itemizedCosts = new List<double>();
+            itemizedCosts.Add(ApplesCost(pCart.Where(x => x == "Apple").Count()));
+            itemizedCosts.Add(OrangesCost(pCart.Where(x => x == "Orange").Count()));
+            itemizedCosts.Add(BananasCost(pCart.Where(x => x == "Banana").Count()));
+
+            itemizedCosts.RemoveAll(x => x == 0); //Remove zeros for comparison purposes
             
-            int apples = 0;
-            int oranges = 0;
-            foreach (var fruit in pCart)
+            if(itemizedCosts.Count > 1)
             {
-                if (fruit == "Apple")
-                    apples++;
-                else
-                    oranges++;
+                itemizedCosts.Sort();
+                itemizedCosts.RemoveAt(0);
             }
 
-            return (ApplesCost(apples)) + (OrangesCost(oranges));
+            double rVal = 0;
+            foreach (var cost in itemizedCosts)
+            {
+                rVal += cost;
+            }
+            return rVal;
+            #endregion
         }
 
         //Current deal for apples is buy one get one
@@ -62,5 +104,14 @@ namespace FruitStore
                 ((pOranges % 3) * .65);
                 
         }
+
+        //Current deal for Bananas is buy one get one
+        public static double BananasCost(int pBananas)
+        {
+            return pBananas % 2 == 0 ?          //Chcek if odd or even
+                    (pBananas / 2) * .6 :       //Even number cost 
+                    (pBananas / 2) * .6 + .6;   //Odd number cost
+        }
+
     }
 }
