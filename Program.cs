@@ -20,9 +20,15 @@ namespace FruitStore
                 Console.WriteLine(example);
         }
 
+        //Step 1
         //Initial Checkout Method
         //Apple: 45c, Orange: 65c
         //At this point, my store ONLY sells apples and oranges, so every item Will be either an apple or orange
+        //
+        //Step 2
+        //Simple offers
+        //Adding buy 1 get 1 apples
+        //3 for price of 2 oranges
         public static double CheckOut(string[] pCart)
         {
             if(!(pCart.Length >= 1))
@@ -38,7 +44,23 @@ namespace FruitStore
                     oranges++;
             }
 
-            return (apples * .45) + (oranges * .65);
+            return (ApplesCost(apples)) + (OrangesCost(oranges));
+        }
+
+        //Current deal for apples is buy one get one
+        public static double ApplesCost(int pApples)
+        {
+            return pApples % 2 == 0 ?          //Chcek if odd or even
+                    (pApples / 2) * .45 :      //Even number cost 
+                    (pApples / 2) * .45 + .45; //Odd number cost
+        }
+
+        //Current deal for oranges is buy 3 for 2
+        public static double OrangesCost(int pOranges)
+        {
+            return (pOranges / 3) * 1.30 +
+                ((pOranges % 3) * .65);
+                
         }
     }
 }
