@@ -20,6 +20,7 @@ namespace FruitStore
             costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana" }));
             costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana", "Banana" }));
             costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana" }));
+            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon" }));
 
             foreach (var example in costs)
                 Console.WriteLine(example);
@@ -42,10 +43,16 @@ namespace FruitStore
         When comparing the value of multiple items the lowest is removed. 
         The example given compares multiple bananas to multiple apples. The lower of those two is removed even with no oranges.
         So lowest Non zero option is removed as long as its not Only option
+
+
+        Step 4:
+        Even more complicated orders
+        Melons: $1
+        Available with a 3 for 2 deal
         */
         public static double CheckOut(string[] pCart)
         {
-            if(!(pCart.Length >= 1))
+            if (!(pCart.Length >= 1))
                 return 0;
 
             #region Two Fruit Method
@@ -71,10 +78,11 @@ namespace FruitStore
             itemizedCosts.Add(ApplesCost(pCart.Where(x => x == "Apple").Count()));
             itemizedCosts.Add(OrangesCost(pCart.Where(x => x == "Orange").Count()));
             itemizedCosts.Add(BananasCost(pCart.Where(x => x == "Banana").Count()));
+            itemizedCosts.Add(MelonsCost(pCart.Where(x => x == "Melon").Count()));
 
             itemizedCosts.RemoveAll(x => x == 0); //Remove zeros for comparison purposes
-            
-            if(itemizedCosts.Count > 1)
+
+            if (itemizedCosts.Count > 1)
             {
                 itemizedCosts.Sort();
                 itemizedCosts.RemoveAt(0);
@@ -102,7 +110,7 @@ namespace FruitStore
         {
             return (pOranges / 3) * 1.30 +
                 ((pOranges % 3) * .65);
-                
+
         }
 
         //Current deal for Bananas is buy one get one
@@ -113,5 +121,12 @@ namespace FruitStore
                     (pBananas / 2) * .6 + .6;   //Odd number cost
         }
 
+        //Current deal for oranges is buy 3 for 2
+        public static double MelonsCost(int pMelons)
+        {
+            return (pMelons / 3) * 2 +
+                ((pMelons % 3) * 1);
+
+        }
     }
 }
