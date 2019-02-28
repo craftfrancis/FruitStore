@@ -11,19 +11,10 @@ namespace FruitStore
         static void Main(string[] args)
         {
             var costs = new List<double>();
-            costs.Add(CheckOut(new string[] { })); //empty test
-            costs.Add(CheckOut(new[] { "Apple", "Orange" })); //basic test
-            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Apple" })); //example given by prompt
-            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple" })); //larger scale test
-            costs.Add(CheckOut(new[] { "Banana" }));
-            costs.Add(CheckOut(new[] { "Banana", "Banana" }));
-            costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana" }));
-            costs.Add(CheckOut(new[] { "Banana", "Banana", "Banana", "Banana" }));
-            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana" }));
-            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon" }));
+            costs.Add(CheckOut(new[] { "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon", "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon", "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon", "Apple", "Orange", "Apple", "Orange", "Apple", "Apple", "Orange", "Apple", "Apple", "Orange", "Orange", "Apple", "Banana", "Banana", "Banana", "Melon" }));
 
             foreach (var example in costs)
-                Console.WriteLine(example);
+                Console.WriteLine("Your total comes to " + example);
         }
 
         /*Step 1
@@ -49,6 +40,9 @@ namespace FruitStore
         Even more complicated orders
         Melons: $1
         Available with a 3 for 2 deal
+
+        Step 5:
+        Real Time Checkout
         */
         public static double CheckOut(string[] pCart)
         {
@@ -76,15 +70,28 @@ namespace FruitStore
             //Determine the cost of each item type
             var itemizedCosts = new List<double>();
             itemizedCosts.Add(ApplesCost(pCart.Where(x => x == "Apple").Count()));
+            if(itemizedCosts.Last() != 0)
+                Console.WriteLine("Cost of Apples: " + itemizedCosts.Last());
+
             itemizedCosts.Add(OrangesCost(pCart.Where(x => x == "Orange").Count()));
+            if (itemizedCosts.Last() != 0)
+                Console.WriteLine("Cost of Oranges: " + itemizedCosts.Last());
+
             itemizedCosts.Add(BananasCost(pCart.Where(x => x == "Banana").Count()));
+            if (itemizedCosts.Last() != 0)
+                Console.WriteLine("Cost of Bananas: " + itemizedCosts.Last());
+
             itemizedCosts.Add(MelonsCost(pCart.Where(x => x == "Melon").Count()));
+            if (itemizedCosts.Last() != 0)
+                Console.WriteLine("Cost of Melons: " + itemizedCosts.Last());
+
 
             itemizedCosts.RemoveAll(x => x == 0); //Remove zeros for comparison purposes
 
             if (itemizedCosts.Count > 1)
             {
                 itemizedCosts.Sort();
+                Console.WriteLine("You're saving " + itemizedCosts.First());
                 itemizedCosts.RemoveAt(0);
             }
 
@@ -96,7 +103,6 @@ namespace FruitStore
             return rVal;
             #endregion
         }
-
         //Current deal for apples is buy one get one
         public static double ApplesCost(int pApples)
         {
@@ -120,13 +126,11 @@ namespace FruitStore
                     (pBananas / 2) * .6 :       //Even number cost 
                     (pBananas / 2) * .6 + .6;   //Odd number cost
         }
-
         //Current deal for oranges is buy 3 for 2
         public static double MelonsCost(int pMelons)
         {
             return (pMelons / 3) * 2 +
                 ((pMelons % 3) * 1);
-
         }
     }
 }
