@@ -34,8 +34,6 @@ namespace FruitStore
         When comparing the value of multiple items the lowest is removed. 
         The example given compares multiple bananas to multiple apples. The lower of those two is removed even with no oranges.
         So lowest Non zero option is removed as long as its not Only option
-
-
         Step 4:
         Even more complicated orders
         Melons: $1
@@ -43,7 +41,9 @@ namespace FruitStore
 
         Step 5:
         Real Time Checkout
-        */
+        
+        Step 6:Cheapest Baskets
+             */
         public static double CheckOut(string[] pCart)
         {
             if (!(pCart.Length >= 1))
@@ -60,7 +60,6 @@ namespace FruitStore
             //    else
             //        oranges++;
             //}
-
             //return (ApplesCost(apples)) + (OrangesCost(oranges));
             */
             #endregion
@@ -70,7 +69,7 @@ namespace FruitStore
             //Determine the cost of each item type
             var itemizedCosts = new List<double>();
             itemizedCosts.Add(ApplesCost(pCart.Where(x => x == "Apple").Count()));
-            if(itemizedCosts.Last() != 0)
+            if (itemizedCosts.Last() != 0)
                 Console.WriteLine("Cost of Apples: " + itemizedCosts.Last());
 
             itemizedCosts.Add(OrangesCost(pCart.Where(x => x == "Orange").Count()));
@@ -85,15 +84,9 @@ namespace FruitStore
             if (itemizedCosts.Last() != 0)
                 Console.WriteLine("Cost of Melons: " + itemizedCosts.Last());
 
-
             itemizedCosts.RemoveAll(x => x == 0); //Remove zeros for comparison purposes
-
-            if (itemizedCosts.Count > 1)
-            {
-                itemizedCosts.Sort();
-                Console.WriteLine("You're saving " + itemizedCosts.First());
-                itemizedCosts.RemoveAt(0);
-            }
+            
+            itemizedCosts = FindCheapestCart(itemizedCosts); //No longer just dropping lowest item
 
             double rVal = 0;
             foreach (var cost in itemizedCosts)
@@ -132,5 +125,34 @@ namespace FruitStore
             return (pMelons / 3) * 2 +
                 ((pMelons % 3) * 1);
         }
+
+        /*
+        Customers can do multiple trips if they have more than 2 item types and two aren't equal in price
+        So if they have apples, bananas, and melons at values of 2, 3 and 4.5, a singular trip would have them pay 7.5
+        But if they go again with bananas and melons, 3 and 4.5, then the apples, 2, They'd pay 6.5
+        The Intended idea of the deal for the seller is that for a whole list the Lowest item is sold
+        But customers can take advantage of that by coming up once for every pair from highest to lowest
+        So, Re order list from highest to lowest, and remove Every other item until we step out of the list*/
+        public static List<double> FindCheapestCart(List<double> pList)
+        {
+            List<double> CheapestCart = new List<double>();
+            var orderedList = pList.OrderBy(x => x);
+
+            int i = orderedList.Count() - 1;
+            while (i >= 0)
+            {
+                CheapestCart.Add(orderedList.ElementAt(i));
+                if (i - 2 >= 0)
+                    i = i - 2;
+                else
+                {
+                    CheapestCart.Add(orderedList.ElementAt(i - 1));
+                    break;
+                }
+            }
+            
+            return (CheapestCart);
+        }
     }
 }
+ 
