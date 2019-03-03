@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FruitStore
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -15,6 +15,7 @@ namespace FruitStore
 
             foreach (var example in costs)
                 Console.WriteLine("Your total comes to " + example);
+
         }
 
         /*Step 1
@@ -135,20 +136,17 @@ namespace FruitStore
         So, Re order list from highest to lowest, and remove Every other item until we step out of the list*/
         public static List<double> FindCheapestCart(List<double> pList)
         {
+            if(pList.Count() == 1)
+            {
+                return pList;
+            }
+
             List<double> CheapestCart = new List<double>();
             var orderedList = pList.OrderBy(x => x);
-
-            int i = orderedList.Count() - 1;
-            while (i >= 0)
+            
+            for (int j = orderedList.Count() % 2 == 0 ? 1 : 0; j < orderedList.Count(); j = j+ 2)
             {
-                CheapestCart.Add(orderedList.ElementAt(i));
-                if (i - 2 >= 0)
-                    i = i - 2;
-                else
-                {
-                    CheapestCart.Add(orderedList.ElementAt(i - 1));
-                    break;
-                }
+                CheapestCart.Add(orderedList.ElementAt(j));
             }
             
             return (CheapestCart);
